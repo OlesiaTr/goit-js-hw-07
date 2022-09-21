@@ -30,20 +30,23 @@ const selectImg = (event) => {
 
   // Opening a modal window by clicking on a gallery item.
   // Replacing the value of the src attribute of the <img> element in a modal window before opening.
-  const library = basicLightbox.create(
-    `<img width="1400" height="900" src="${event.target.dataset.source}">`
-  );
-
-  library.show();
-
-  // Add modal window closing upon pressing the Escape key. Make keyboard listening available only while the modal window is open. In the basicLightbox library, there is a method to close the modal window programmatically.
-  refs.gallery.addEventListener("keydown", (e) => {
+  function closeModal(e) {
     if (e.code !== "Escape") {
       return;
     }
-
     library.close();
-  });
+  }
+
+  const library = basicLightbox.create(
+    `<img width="1400" height="900" src="${event.target.dataset.source}">`,
+    {
+      // Add modal window closing upon pressing the Escape key. Make keyboard listening available only while the modal window is open. In the basicLightbox library, there is a method to close the modal window programmatically.
+      onShow: (library) => document.addEventListener("keydown", closeModal),
+      onClose: (library) => document.removeEventListener("keydown", closeModal),
+    }
+  );
+
+  library.show();
 };
 
 refs.gallery.addEventListener("click", selectImg);
